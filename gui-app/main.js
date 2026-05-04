@@ -8,16 +8,16 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1400,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    },
-    icon: path.join(__dirname, 'icon.png')
+    }
   });
 
   mainWindow.loadFile('index.html');
+  mainWindow.webContents.openDevTools(); // Для отладки
 }
 
 app.whenReady().then(createWindow);
@@ -40,7 +40,6 @@ ipcMain.handle('load-config', async () => {
   if (fs.existsSync(configPath)) {
     return JSON.parse(fs.readFileSync(configPath, 'utf8'));
   }
-  // Путь по умолчанию - родительская папка от gui-app
   const defaultPath = path.join(__dirname, '..');
   return { 
     projectPath: defaultPath, 
@@ -57,46 +56,38 @@ ipcMain.handle('save-config', async (event, config) => {
   return { success: true };
 });
 
-// Загрузка услуг из OPTSMM
+// ПРЯМАЯ загрузка услуг из OPTSMM API
 ipcMain.handle('load-services', async (event, apiKey) => {
   try {
-    console.log('Загрузка услуг с API ключом:', apiKey ? apiKey.substring(0, 10) + '...' : 'НЕТ КЛЮЧА');
+    console.log('🔄 Загрузка услуг напрямую из OPTSMM API...');
+    console.log('API ключ:', apiKey ? apiKey.substring(0, 15) + '...' : 'НЕТ');
     
-    if (!apiKey) {
-      return { success: false, error: 'API ключ не указан' };
-    }
+    const url = `https://optsmm.ru/api/v2?action=services&key=${apiKey}`;
+    console.log('URL:', url.substring(0, 60) + '...');
     
-    const response = await axios.get('https://optsmm.ru/api/v2', {
-      params: {
-        action: 'services',
-        key: apiKey
-      },
-      timeout: 15000,
+    const response = await axios.get(url, {
+      timeout: 20000,
       headers: {
-        'User-Agent': 'Unactivity-SMM/1.0'
+        'User-Agent': 'Mozilla/5.0'
       }
     });
     
-    console.log('Статус ответа:', response.status);
+    console.log('✅ Ответ получен, статус:', response.status);
     console.log('Тип данных:', typeof response.data);
     console.log('Это массив?', Array.isArray(response.data));
     
-    if (response.data && Array.isArray(response.data)) {
+    if (Array.isArray(response.data)) {
       console.log('✅ Загружено услуг:', response.data.length);
       return { success: true, services: response.data };
-    } else if (response.data && typeof response.data === 'object') {
-      // Возможно данные в другом формате
-      console.log('Ключи объекта:', Object.keys(response.data));
-      return { success: false, error: 'API вернул объект вместо массива: ' + JSON.stringify(response.data).substring(0, 200) };
     } else {
-      return { success: false, error: 'API вернул неверный формат данных' };
+      console.log('❌ Данные не массив:', response.data);
+      return { success: false, error: 'API вернул не массив: ' + JSON.stringify(response.data).substring(0, 100) };
     }
   } catch (error) {
-    console.error('❌ Ошибка загрузки услуг:', error.message);
+    console.error('❌ Ошибка:', error.message);
     if (error.response) {
-      console.error('Статус ответа:', error.response.status);
-      console.error('Данные ответа:', error.response.data);
-      return { success: false, error: `HTTP ${error.response.status}: ${JSON.stringify(error.response.data)}` };
+      console.error('Статус:', error.response.status);
+      console.error('Данные:', error.response.data);
     }
     return { success: false, error: error.message };
   }
@@ -107,13 +98,11 @@ ipcMain.handle('create-pincode', async (event, { projectPath, services }) => {
   try {
     const dbPath = path.join(projectPath, 'database.json');
     
-    // Загрузка базы данных
     let database = { pincodes: {}, orders: {} };
     if (fs.existsSync(dbPath)) {
       database = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
     }
     
-    // Генерация пинкода
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let pincode = '';
     do {
@@ -123,7 +112,6 @@ ipcMain.handle('create-pincode', async (event, { projectPath, services }) => {
       }
     } while (database.pincodes[pincode]);
     
-    // Добавление пинкода
     database.pincodes[pincode] = {
       pincode,
       services: services.map(s => ({
@@ -136,7 +124,6 @@ ipcMain.handle('create-pincode', async (event, { projectPath, services }) => {
       createdAt: new Date().toISOString()
     };
     
-    // Сохранение базы данных
     fs.writeFileSync(dbPath, JSON.stringify(database, null, 2));
     
     return { success: true, pincode, data: database.pincodes[pincode] };
@@ -175,19 +162,16 @@ ipcMain.handle('load-orders', async (event, projectPath) => {
   }
 });
 
-// Коммит и пуш в GitHub
+// Git push
 ipcMain.handle('git-push', async (event, { projectPath, message, githubToken, githubRepo }) => {
   try {
     const git = simpleGit(projectPath);
     
-    // Если есть токен, настраиваем remote с токеном
     if (githubToken && githubRepo) {
       const repoUrl = githubRepo.replace('https://', `https://${githubToken}@`);
       try {
         await git.removeRemote('origin');
-      } catch (e) {
-        // Игнорируем если remote не существует
-      }
+      } catch (e) {}
       await git.addRemote('origin', repoUrl);
     }
     
@@ -197,7 +181,7 @@ ipcMain.handle('git-push', async (event, { projectPath, message, githubToken, gi
     
     return { success: true };
   } catch (error) {
-    console.error('Git push error:', error);
+    console.error('Git error:', error);
     return { success: false, error: error.message };
   }
 });
