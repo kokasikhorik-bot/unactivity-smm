@@ -1,4 +1,18 @@
 {
-  "pincodes": {},
+  "pincodes": {
+    "IZLTEWMLDBSR9QGU": {
+      "pincode": "IZLTEWMLDBSR9QGU",
+      "services": [
+        {
+          "serviceId": "84",
+          "serviceName": "Подписчики ❌ Без гарантии",
+          "quantity": "100",
+          "description": "Тест",
+          "used": false
+        }
+      ],
+      "createdAt": "2026-05-04T10:19:00.685Z"
+    }
+  },
   "orders": {}
 }
