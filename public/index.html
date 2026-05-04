@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unactivity SMM - Премиум Сервис</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <h1>Unactivity SMM</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active" data-page="order">🎯 Заказ</a>
+                <a href="#" class="nav-link" data-page="status">📊 Статус</a>
+            </nav>
+        </header>
+
+        <!-- Страница заказа -->
+        <div id="order-page" class="page active">
+            <div class="hero">
+                <div class="hero-icon">🚀</div>
+                <h2 class="hero-title">Премиум накрутка для вашего профиля</h2>
+                <p class="hero-subtitle">Быстро • Надежно • Качественно</p>
+                <div class="hero-features">
+                    <div class="feature">
+                        <span class="feature-icon">⚡</span>
+                        <span>Мгновенный старт</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🔒</span>
+                        <span>Безопасно</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💎</span>
+                        <span>Премиум качество</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Введите пинкод</h3>
+                    <p>Получите доступ к вашему заказу</p>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" id="pincode-input" class="input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
+                        <button id="verify-btn" class="btn btn-primary">
+                            <span>Проверить</span>
+                            <div class="btn-glow"></div>
+                        </button>
+                    </div>
+                    <div id="pincode-error" class="error-message"></div>
+                </div>
+            </div>
+
+            <!-- Форма заказа (скрыта до проверки пинкода) -->
+            <div id="order-form" class="card" style="display: none;">
+                <div class="card-header">
+                    <h3 id="service-name">Услуга</h3>
+                    <p id="service-description">Описание услуги</p>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="link-input">Ссылка на профиль/пост</label>
+                        <input type="text" id="link-input" class="input" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity-input">Количество</label>
+                        <input type="number" id="quantity-input" class="input" placeholder="1000">
+                        <small class="input-hint">Доступно: <span id="available-quantity">0</span></small>
+                    </div>
+                    <button id="submit-order-btn" class="btn btn-success btn-large">
+                        <span>🚀 Запустить накрутку</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                    <div id="order-error" class="error-message"></div>
+                </div>
+            </div>
+
+            <!-- Результат заказа -->
+            <div id="order-result" class="card success-card" style="display: none;">
+                <div class="success-icon">✓</div>
+                <h3>Заказ успешно создан!</h3>
+                <p>Ваш заказ принят в обработку</p>
+                <div class="order-info">
+                    <div class="info-item">
+                        <span class="info-label">ID заказа:</span>
+                        <span class="info-value" id="result-order-id">-</span>
+                    </div>
+                </div>
+                <button id="check-status-btn" class="btn btn-primary">Проверить статус</button>
+            </div>
+        </div>
+
+        <!-- Страница статуса -->
+        <div id="status-page" class="page">
+            <div class="hero">
+                <h2 class="hero-title">Отслеживание заказов</h2>
+                <p class="hero-subtitle">Проверьте статус вашего заказа</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Введите пинкод</h3>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" id="status-pincode-input" class="input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
+                        <button id="check-orders-btn" class="btn btn-primary">
+                            <span>Проверить</span>
+                            <div class="btn-glow"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="orders-list" class="orders-container"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

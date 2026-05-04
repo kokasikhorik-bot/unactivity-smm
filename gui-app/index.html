@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unactivity SMM Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 Unactivity SMM Manager</h1>
+            <button id="settings-btn" class="btn btn-secondary">⚙️ Настройки</button>
+        </header>
+
+        <!-- Настройки -->
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <h2>Настройки</h2>
+                <div class="form-group">
+                    <label>Путь к проекту:</label>
+                    <input type="text" id="project-path" class="input" placeholder="Автоматически определяется" readonly style="background: rgba(255,255,255,0.05);">
+                    <small style="color: rgba(255,255,255,0.5);">Путь определяется автоматически</small>
+                </div>
+                <div class="form-group">
+                    <label>OPTSMM API Key:</label>
+                    <input type="text" id="api-key" class="input" placeholder="zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR">
+                </div>
+                <div class="form-group">
+                    <label>GitHub Repository URL:</label>
+                    <input type="text" id="github-repo" class="input" value="https://github.com/kokasikhorik-bot/unactivity-smm.git" readonly style="background: rgba(255,255,255,0.05);">
+                    <small style="color: rgba(255,255,255,0.5);">Репозиторий уже создан и настроен</small>
+                </div>
+                <div class="form-group">
+                    <label>GitHub Token:</label>
+                    <input type="password" id="github-token" class="input" placeholder="ghp_...">
+                    <small style="color: rgba(255,255,255,0.5);">Введите ваш GitHub токен</small>
+                </div>
+                <div class="form-group">
+                    <label>OPTSMM API Key:</label>
+                    <input type="text" id="api-key" class="input" value="zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR" readonly style="background: rgba(255,255,255,0.05);">
+                    <small style="color: rgba(255,255,255,0.5);">API ключ уже настроен</small>
+                </div>
+                <div class="modal-actions">
+                    <button id="save-settings-btn" class="btn btn-primary">Сохранить</button>
+                    <button id="close-settings-btn" class="btn btn-secondary">Закрыть</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Табы -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="create">Создать пинкод</button>
+            <button class="tab-btn" data-tab="pincodes">Пинкоды</button>
+            <button class="tab-btn" data-tab="orders">Заказы</button>
+        </div>
+
+        <!-- Создание пинкода -->
+        <div id="create-tab" class="tab-content active">
+            <div class="card">
+                <h2>Создание нового пинкода</h2>
+                <div id="services-container">
+                    <div class="service-item">
+                        <div class="form-group">
+                            <label>Услуга:</label>
+                            <select class="service-select input">
+                                <option value="">Загрузка...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Количество:</label>
+                            <input type="number" class="service-quantity input" placeholder="1000">
+                        </div>
+                        <div class="form-group">
+                            <label>Описание:</label>
+                            <input type="text" class="service-description input" placeholder="Опционально">
+                        </div>
+                        <button class="btn btn-danger remove-service-btn" style="display: none;">Удалить</button>
+                    </div>
+                </div>
+                <button id="add-service-btn" class="btn btn-secondary">+ Добавить услугу</button>
+                <button id="generate-pincode-btn" class="btn btn-primary btn-large">🎫 Сгенерировать пинкод</button>
+                
+                <div id="result-container" style="display: none;">
+                    <div class="success-box">
+                        <h3>✓ Пинкод создан!</h3>
+                        <div class="pincode-display" id="pincode-display">XXXX-XXXX-XXXX-XXXX</div>
+                        <button id="copy-pincode-btn" class="btn btn-primary">📋 Копировать</button>
+                        <button id="push-github-btn" class="btn btn-success">🚀 Залить на GitHub</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список пинкодов -->
+        <div id="pincodes-tab" class="tab-content">
+            <div class="card">
+                <h2>Все пинкоды</h2>
+                <button id="refresh-pincodes-btn" class="btn btn-secondary">🔄 Обновить</button>
+                <div id="pincodes-list"></div>
+            </div>
+        </div>
+
+        <!-- Список заказов -->
+        <div id="orders-tab" class="tab-content">
+            <div class="card">
+                <h2>Все заказы</h2>
+                <button id="refresh-orders-btn" class="btn btn-secondary">🔄 Обновить</button>
+                <div id="orders-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
