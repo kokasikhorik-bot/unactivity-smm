@@ -11,10 +11,31 @@ let services = [];
   document.getElementById('github-repo').value = config.githubRepo || '';
   document.getElementById('github-token').value = config.githubToken || '';
   
+  console.log('✅ Конфигурация загружена:', {
+    projectPath: config.projectPath,
+    apiKey: config.apiKey ? config.apiKey.substring(0, 15) + '...' : 'НЕТ',
+    githubRepo: config.githubRepo
+  });
+  
+  // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА УСЛУГ ПРИ СТАРТЕ
   if (config.apiKey) {
+    console.log('🔄 Автоматическая загрузка услуг при старте...');
     await loadServices();
+  } else {
+    console.log('⚠️ API ключ не настроен, услуги не загружены');
   }
 })();
+
+// Кнопка загрузки услуг
+document.getElementById('load-services-btn').addEventListener('click', async () => {
+  const statusDiv = document.getElementById('services-status');
+  statusDiv.style.display = 'block';
+  statusDiv.style.background = 'rgba(59, 130, 246, 0.2)';
+  statusDiv.style.color = '#60a5fa';
+  statusDiv.textContent = '🔄 Загрузка услуг из OPTSMM API...';
+  
+  await loadServices();
+});
 
 // Навигация по табам
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -61,31 +82,77 @@ document.getElementById('save-settings-btn').addEventListener('click', async () 
 
 // Загрузка услуг
 async function loadServices() {
+  const statusDiv = document.getElementById('services-status');
+  
+  // Показываем индикатор загрузки в дропдаунах
+  const selects = document.querySelectorAll('.service-select');
+  selects.forEach(select => {
+    select.innerHTML = '<option value="">🔄 Загрузка услуг...</option>';
+  });
+  
   if (!config.apiKey) {
     console.log('❌ API ключ не настроен');
-    alert('Настройте API ключ в настройках!');
+    statusDiv.style.display = 'block';
+    statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+    statusDiv.style.color = '#ef4444';
+    statusDiv.textContent = '❌ API ключ не настроен!';
+    
+    selects.forEach(select => {
+      select.innerHTML = '<option value="">❌ API ключ не настроен</option>';
+    });
     return;
   }
   
-  console.log('🔄 Загрузка услуг...');
+  console.log('🔄 Начинаем загрузку услуг...');
+  console.log('API ключ:', config.apiKey.substring(0, 20) + '...');
   
   try {
     const result = await ipcRenderer.invoke('load-services', config.apiKey);
     
-    console.log('Результат загрузки:', result);
+    console.log('📦 Результат загрузки:', result);
     
     if (result.success && Array.isArray(result.services)) {
       services = result.services;
       updateServiceSelects();
       console.log('✅ Загружено услуг:', services.length);
-      alert(`✅ Загружено ${services.length} услуг из OPTSMM!`);
+      
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+        statusDiv.style.color = '#10b981';
+        statusDiv.textContent = `✅ Загружено ${services.length} услуг из OPTSMM!`;
+        
+        setTimeout(() => {
+          statusDiv.style.display = 'none';
+        }, 5000);
+      }
     } else {
       console.error('❌ Ошибка загрузки услуг:', result.error);
-      alert('❌ Ошибка загрузки услуг:\n\n' + (result.error || 'Неизвестная ошибка') + '\n\nПроверьте:\n1. API ключ правильный\n2. Есть интернет\n3. OPTSMM API работает');
+      
+      selects.forEach(select => {
+        select.innerHTML = '<option value="">❌ Ошибка загрузки</option>';
+      });
+      
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+        statusDiv.style.color = '#ef4444';
+        statusDiv.innerHTML = `❌ Ошибка загрузки услуг:<br><small>${result.error}</small>`;
+      }
     }
   } catch (error) {
     console.error('❌ Критическая ошибка:', error);
-    alert('❌ Критическая ошибка загрузки услуг:\n\n' + error.message);
+    
+    selects.forEach(select => {
+      select.innerHTML = '<option value="">❌ Критическая ошибка</option>';
+    });
+    
+    if (statusDiv) {
+      statusDiv.style.display = 'block';
+      statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+      statusDiv.style.color = '#ef4444';
+      statusDiv.innerHTML = `❌ Критическая ошибка:<br><small>${error.message}</small>`;
+    }
   }
 }
 

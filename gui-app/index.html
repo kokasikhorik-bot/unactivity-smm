@@ -36,11 +36,10 @@
                     <input type="password" id="github-token" class="input" placeholder="ghp_...">
                     <small style="color: rgba(255,255,255,0.5);">Введите ваш GitHub токен</small>
                 </div>
-                <div class="form-group">
-                    <label>OPTSMM API Key:</label>
-                    <input type="text" id="api-key" class="input" value="zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR" readonly style="background: rgba(255,255,255,0.05);">
-                    <small style="color: rgba(255,255,255,0.5);">API ключ уже настроен</small>
-                </div>
+                <button id="load-services-btn" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                    🔄 Загрузить услуги из OPTSMM
+                </button>
+                <div id="services-status" style="margin-top: 10px; padding: 10px; border-radius: 8px; display: none;"></div>
                 <div class="modal-actions">
                     <button id="save-settings-btn" class="btn btn-primary">Сохранить</button>
                     <button id="close-settings-btn" class="btn btn-secondary">Закрыть</button>

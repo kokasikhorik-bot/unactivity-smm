@@ -37,16 +37,28 @@ app.on('activate', () => {
 // Загрузка конфигурации
 ipcMain.handle('load-config', async () => {
   const configPath = path.join(app.getPath('userData'), 'config.json');
-  if (fs.existsSync(configPath)) {
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  }
   const defaultPath = path.join(__dirname, '..');
-  return { 
+  const defaultConfig = { 
     projectPath: defaultPath, 
     apiKey: 'zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR', 
     githubRepo: 'https://github.com/kokasikhorik-bot/unactivity-smm.git',
-    githubToken: ''
+    githubToken: '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'
   };
+  
+  if (fs.existsSync(configPath)) {
+    const savedConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    // Объединяем с дефолтными значениями (дефолты заполняют пустые поля)
+    return {
+      projectPath: savedConfig.projectPath || defaultConfig.projectPath,
+      apiKey: savedConfig.apiKey || defaultConfig.apiKey,
+      githubRepo: savedConfig.githubRepo || defaultConfig.githubRepo,
+      githubToken: savedConfig.githubToken || defaultConfig.githubToken
+    };
+  }
+  
+  // Если файла нет - сохраняем дефолтную конфигурацию
+  fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 2));
+  return defaultConfig;
 });
 
 // Сохранение конфигурации
