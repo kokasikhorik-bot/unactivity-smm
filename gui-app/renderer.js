@@ -62,24 +62,30 @@ document.getElementById('save-settings-btn').addEventListener('click', async () 
 // Загрузка услуг
 async function loadServices() {
   if (!config.apiKey) {
-    console.log('API ключ не настроен');
+    console.log('❌ API ключ не настроен');
+    alert('Настройте API ключ в настройках!');
     return;
   }
+  
+  console.log('🔄 Загрузка услуг...');
   
   try {
     const result = await ipcRenderer.invoke('load-services', config.apiKey);
     
+    console.log('Результат загрузки:', result);
+    
     if (result.success && Array.isArray(result.services)) {
       services = result.services;
       updateServiceSelects();
-      console.log('Загружено услуг:', services.length);
+      console.log('✅ Загружено услуг:', services.length);
+      alert(`✅ Загружено ${services.length} услуг из OPTSMM!`);
     } else {
-      console.error('Ошибка загрузки услуг:', result.error);
-      alert('Ошибка загрузки услуг: ' + (result.error || 'Неизвестная ошибка'));
+      console.error('❌ Ошибка загрузки услуг:', result.error);
+      alert('❌ Ошибка загрузки услуг:\n\n' + (result.error || 'Неизвестная ошибка') + '\n\nПроверьте:\n1. API ключ правильный\n2. Есть интернет\n3. OPTSMM API работает');
     }
   } catch (error) {
-    console.error('Ошибка:', error);
-    alert('Ошибка загрузки услуг: ' + error.message);
+    console.error('❌ Критическая ошибка:', error);
+    alert('❌ Критическая ошибка загрузки услуг:\n\n' + error.message);
   }
 }
 

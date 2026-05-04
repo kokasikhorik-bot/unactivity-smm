@@ -60,24 +60,44 @@ ipcMain.handle('save-config', async (event, config) => {
 // Загрузка услуг из OPTSMM
 ipcMain.handle('load-services', async (event, apiKey) => {
   try {
-    console.log('Загрузка услуг с API ключом:', apiKey.substring(0, 10) + '...');
-    const response = await axios.get(`https://optsmm.ru/api/v2`, {
+    console.log('Загрузка услуг с API ключом:', apiKey ? apiKey.substring(0, 10) + '...' : 'НЕТ КЛЮЧА');
+    
+    if (!apiKey) {
+      return { success: false, error: 'API ключ не указан' };
+    }
+    
+    const response = await axios.get('https://optsmm.ru/api/v2', {
       params: {
         action: 'services',
         key: apiKey
       },
-      timeout: 10000
+      timeout: 15000,
+      headers: {
+        'User-Agent': 'Unactivity-SMM/1.0'
+      }
     });
     
-    console.log('Ответ получен, услуг:', Array.isArray(response.data) ? response.data.length : 'не массив');
+    console.log('Статус ответа:', response.status);
+    console.log('Тип данных:', typeof response.data);
+    console.log('Это массив?', Array.isArray(response.data));
     
-    if (Array.isArray(response.data)) {
+    if (response.data && Array.isArray(response.data)) {
+      console.log('✅ Загружено услуг:', response.data.length);
       return { success: true, services: response.data };
+    } else if (response.data && typeof response.data === 'object') {
+      // Возможно данные в другом формате
+      console.log('Ключи объекта:', Object.keys(response.data));
+      return { success: false, error: 'API вернул объект вместо массива: ' + JSON.stringify(response.data).substring(0, 200) };
     } else {
       return { success: false, error: 'API вернул неверный формат данных' };
     }
   } catch (error) {
-    console.error('Ошибка загрузки услуг:', error.message);
+    console.error('❌ Ошибка загрузки услуг:', error.message);
+    if (error.response) {
+      console.error('Статус ответа:', error.response.status);
+      console.error('Данные ответа:', error.response.data);
+      return { success: false, error: `HTTP ${error.response.status}: ${JSON.stringify(error.response.data)}` };
+    }
     return { success: false, error: error.message };
   }
 });

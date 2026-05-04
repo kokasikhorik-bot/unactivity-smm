@@ -6,6 +6,7 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
+const simpleGit = require('simple-git');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -162,7 +163,35 @@ app.post('/api/create-order', async (req, res) => {
       service.used = true;
       service.orderId = orderId;
       
+      // Проверка: все ли услуги использованы
+      const allUsed = pincodeData.services.every(s => s.used);
+      
+      if (allUsed) {
+        // Удаляем пинкод полностью
+        delete database.pincodes[pincode];
+        console.log(`✅ Пинкод ${pincode} полностью использован и удален`);
+      }
+      
       saveDatabase();
+      
+      // АВТОМАТИЧЕСКИЙ ПУШ В GITHUB ПОСЛЕ ИСПОЛЬЗОВАНИЯ ПИНКОДА
+      try {
+        const simpleGit = require('simple-git');
+        const git = simpleGit(process.cwd());
+        
+        await git.add('database.json');
+        await git.commit(`Remove used pincode ${pincode}`);
+        
+        // Пытаемся запушить (если настроен remote)
+        try {
+          await git.push();
+          console.log('✅ Изменения автоматически загружены на GitHub');
+        } catch (pushError) {
+          console.log('⚠️ Не удалось запушить (возможно remote не настроен):', pushError.message);
+        }
+      } catch (gitError) {
+        console.log('⚠️ Git операция не выполнена:', gitError.message);
+      }
       
       res.json({ 
         success: true, 
