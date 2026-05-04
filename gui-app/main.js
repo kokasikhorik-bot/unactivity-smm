@@ -42,7 +42,7 @@ ipcMain.handle('load-config', async () => {
     projectPath: defaultPath, 
     apiKey: 'zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR', 
     githubRepo: 'https://github.com/kokasikhorik-bot/unactivity-smm.git',
-    githubToken: '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'
+    githubToken: '' // Пользователь должен ввести свой токен
   };
   
   if (fs.existsSync(configPath)) {

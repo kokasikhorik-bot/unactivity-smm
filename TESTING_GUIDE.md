@@ -127,7 +127,7 @@ URL: https://optsmm.ru/api/v2?action=services&key=zhLKUyf12...
 ### Проблема 4: GitHub автопуш не работает
 **Решение**:
 1. Откройте настройки
-2. Убедитесь, что "GitHub Token" заполнен: `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`
+2. Введите ваш GitHub Token в поле "GitHub Token"
 3. Нажмите "Сохранить"
 4. Попробуйте создать пинкод снова
 

@@ -59,7 +59,7 @@
 ```
 API Key: zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR
 GitHub: https://github.com/kokasikhorik-bot/unactivity-smm.git
-Token: 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
+Token: [НАСТРОЙТЕ В ПРИЛОЖЕНИИ]
 ```
 
 ## 📋 Структура проекта

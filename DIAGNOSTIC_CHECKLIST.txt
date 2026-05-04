@@ -96,7 +96,7 @@
 
 ❌ Если пинкод создался, но НЕ загрузился на GitHub:
    - Проверьте GitHub Token в настройках
-   - Должен быть: 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
+   - Введите ваш личный GitHub токен
 
 ═══════════════════════════════════════════════════════════════
   ЭТАП 7: ПРОВЕРКА НАСТРОЕК
@@ -107,7 +107,7 @@
 [ ] 7.1 Путь к проекту: (автоматически, readonly)
 [ ] 7.2 OPTSMM API Key: zhLKUyf12DwMSsuStEfI9eo99AwvdBEL7pDZ9Fv8CnoUzxGUP7CiuhwdWPSR
 [ ] 7.3 GitHub Repository: https://github.com/kokasikhorik-bot/unactivity-smm.git
-[ ] 7.4 GitHub Token: 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
+[ ] 7.4 GitHub Token: [ВВЕДИТЕ ВАШ ТОКЕН]
 [ ] 7.5 НЕТ дублирующих полей (только 1 поле для API ключа)
 
 ═══════════════════════════════════════════════════════════════
